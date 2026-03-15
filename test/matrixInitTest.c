@@ -2,9 +2,13 @@
 #include "../src/include/matrix.h"
 
 int main() {
-    Matrix* matrix = matrix_create(25, 25);
+    Matrix* matrix = matrix_create(5, 5, 4);
 
-    print_matrix(matrix);
+    matrix_print(matrix);
+
+    matrix_set(matrix, 3, 3, -4); // position is 0-4 
+
+    matrix_print(matrix);
 
     matrix_free(matrix);
 
