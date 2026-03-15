@@ -1,4 +1,4 @@
-#include "../src/include/multithreading.h"
+#include "../src/include/cpuMultithreading.h"
 #include "../src/include/matrix.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,25 +29,21 @@ int main() {
 
     start = clock();
 
-    Matrix *a = matrix_create(5, 5, 0);
+    Matrix *a = matrix_create(5000, 5000, 0);
     if (!a)
         return 1;
 
     fill_random(a);   
-    matrix_print(a);
 
-    Matrix *b = matrix_create(5, 5, 0);
+    Matrix *b = matrix_create(5000, 5000, 0);
     if (!b)
         return 1;
 
     fill_random(b);
-    matrix_print(b);
 
     Matrix *c = matrix_multiply_mt(a, b, 16);
     if (!c)
         return 1;
-
-    matrix_print(c);
 
     matrix_free(a);
     matrix_free(b);
