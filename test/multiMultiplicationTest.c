@@ -8,11 +8,8 @@
 #define RANDOM_MAX 10.0
 
 void fill_random(Matrix *a) {
-    for (size_t i = 0; i < a->rows; ++i)
-    {
-        for (size_t j = 0; j < a->cols; ++j)
-        {
-
+    for (size_t i = 0; i < a->rows; ++i) {
+        for (size_t j = 0; j < a->cols; ++j) {
             double r = (double)rand() / RAND_MAX;
             double value = RANDOM_MIN + r * (RANDOM_MAX - RANDOM_MIN);
 
