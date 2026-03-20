@@ -1,29 +1,28 @@
 #include "include/multithreading.h"
 #include <stdlib.h>
-#include <pthread.h>
 
-void* matrix_worker(void* arg) {
+DWORD WINAPI matrix_worker(LPVOID arg) {
     ThreadData* data = (ThreadData*)arg;
 
     Matrix* a = data->a;
-    Matrix* b = data->b;
+    Matrix* b_t = data->b; // already transposed
     Matrix* c = data->c;
 
-    // matrix multplication implementation O(N^3)
     for (size_t i = data->row_start; i < data->row_end; ++i) {
-        for (size_t j = 0; j < b->cols; ++j) {
+        for (size_t j = 0; j < b_t->rows; ++j) {
+
             double dotProduct = 0.0;
 
             for (size_t k = 0; k < a->cols; ++k) {
-                // do not call matrix_get, function calls inside inner loops = less performance
-                dotProduct += a->data[i * a->cols + k] * b->data[j * b->cols + k]; 
+                dotProduct += a->data[i * a->cols + k] *
+                              b_t->data[j * b_t->cols + k];
             }
 
             c->data[i * c->cols + j] = dotProduct;
         }
     }
 
-    return NULL;
+    return 0;
 }
 
 Matrix* matrix_multiply_cpu_mt(Matrix* a, Matrix* b, int threads) {
@@ -37,7 +36,7 @@ Matrix* matrix_multiply_cpu_mt(Matrix* a, Matrix* b, int threads) {
     Matrix* c = matrix_create(a->rows, b->cols, 0);
     Matrix* b_t = matrix_transpose(b);
 
-    pthread_t* thread_pool = malloc(sizeof(pthread_t) * threads);
+    HANDLE* thread_pool = malloc(sizeof(HANDLE) * threads);
     ThreadData* thread_data = malloc(sizeof(ThreadData) * threads);
 
     size_t rows_per_thread = a->rows / threads;
@@ -50,21 +49,40 @@ Matrix* matrix_multiply_cpu_mt(Matrix* a, Matrix* b, int threads) {
 
         thread_data[t].row_start = t * rows_per_thread;
 
-        if (t == threads - 1)
-            thread_data[t].row_end = a->rows;
-        else
-            thread_data[t].row_end = (t + 1) * rows_per_thread;
+        thread_data[t].row_end = (t == threads - 1)
+            ? a->rows
+            : (t + 1) * rows_per_thread;
 
-        pthread_create(&thread_pool[t], NULL, matrix_worker, &thread_data[t]);
+        thread_pool[t] = CreateThread(
+            NULL,
+            0,
+            matrix_worker,
+            &thread_data[t],
+            0,
+            NULL
+        );
     }
 
-    for (int t = 0; t < threads; ++t)
-        pthread_join(thread_pool[t], NULL);
+    for (int t = 0; t < threads; ++t) {
+        WaitForSingleObject(thread_pool[t], INFINITE);
+        CloseHandle(thread_pool[t]);
+    }
 
     matrix_free(b_t);
-
     free(thread_pool);
     free(thread_data);
 
     return c;
+}
+
+void matrix_multiply_gpu(Matrix* a, Matrix* b, Matrix* c) {
+    gpu_matrix_multiply(a->data, b->data, c->data, a->rows, a->cols, b->cols);
+}
+
+void matrix_multiply_mt(Matrix* a, Matrix* b, Matrix* c, Backend backend) {
+    if (backend == BACKEND_GPU) {
+        matrix_multiply_gpu(a, b, c);
+    } else {
+        c = matrix_multiply_cpu_mt(a, b, 4); 
+    }
 }

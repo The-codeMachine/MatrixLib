@@ -23,10 +23,15 @@ Eventually, there will be a main.h that will include the necessary headers for y
 To compile this project successfully you must compile the CUDA components, and then the C components. To compile successfully enter the following commands:
 
 ```powershell
-nvcc -c gpu_matmul.cu -o gpu_matmul.o
-                                # another test file goes here (for compilation)
-gcc -c matrix.c multithreading.c -o matrix.o
+nvcc -c src/cude/gpu_matmul.cu -o gpu_matmul.obj # necessary for GPU compilation
+cl src/matrix.c # necessary
+cl src/multithreading.c # necessary
+cl test/matrixgputest.c # any usage file
 
-nvcc matrix.o gpu_matmul.o -o matrixlib
-
+app
 ```
+
+The above code was taken from the root directory of matrixlib.
+
+To ensure that this will work please make sure you have CUDA's nvcc installed, and that you use x64 Native Tools for 2022 VS Development command prompt, 
+to ensure that the nvcc can access the cl.exe.

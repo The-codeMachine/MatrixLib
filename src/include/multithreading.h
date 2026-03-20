@@ -1,6 +1,7 @@
 #ifndef MULTITHREADING_H
 #define MULTITHREADING_H
 
+#include <windows.h>
 #include "matrix.h"
 #include "../cuda/gpu_matmul.h"
 
@@ -18,25 +19,17 @@ typedef struct {
 } ThreadData;
 
 // Worker function
-void* matrix_worker(void* arg);
+DWORD WINAPI matrix_worker(LPVOID arg);
 
 // Thread creation
 Matrix* matrix_multiply_cpu_mt(Matrix* a, Matrix* b, int threads);
 
 // GPU multithreading
-void matrix_multiply_gpu(Matrix* a, Matrix* b, Matrix* c) {
-    gpu_matrix_multiply(a->data, b->data, c->data, a->rows, a->cols, b->cols);
-}
+void matrix_multiply_gpu(Matrix* a, Matrix* b, Matrix* c);
 
 // TODO: migrate all of the multithreading fucntions into one simple matrix_multiply function
 // that determines what to use (GPU/CPU) based off the calculations, how many threads, etc. 
 
-void matrix_multiply_mt(Matrix* a, Matrix* b, Matrix* c, Backend backend) {
-    if (backend == BACKEND_GPU) {
-        matrix_multiply_gpu(a, b, c);
-    } else {
-        c = matrix_multiply_cpu_mt(a, b, 4); 
-    }
-}
+void matrix_multiply_mt(Matrix* a, Matrix* b, Matrix* c, Backend backend);
 
 #endif
