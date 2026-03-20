@@ -17,3 +17,16 @@ Currently, to access the matrix operations include "your/folder/dir/src/include/
 When GPU multithreading is added a header for that will also need to be include if you want to do GPU multithreading.
 
 Eventually, there will be a main.h that will include the necessary headers for you, and compile the correct source code. 
+
+# Compilation
+
+To compile this project successfully you must compile the CUDA components, and then the C components. To compile successfully enter the following commands:
+
+```powershell
+nvcc -c gpu_matmul.cu -o gpu_matmul.o
+                                # another test file goes here (for compilation)
+gcc -c matrix.c multithreading.c -o matrix.o
+
+nvcc matrix.o gpu_matmul.o -o matrixlib
+
+```

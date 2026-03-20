@@ -1,4 +1,4 @@
-#include "../src/include/cpuMultithreading.h"
+#include "../src/include/multithreading.h"
 #include "../src/include/matrix.h"
 #include <stdio.h>
 #include <stdlib.h>

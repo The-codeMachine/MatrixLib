@@ -1,4 +1,4 @@
-#include "include/cpuMultithreading.h"
+#include "include/multithreading.h"
 #include <stdlib.h>
 #include <pthread.h>
 
