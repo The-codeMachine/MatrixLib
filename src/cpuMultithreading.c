@@ -26,7 +26,7 @@ void* matrix_worker(void* arg) {
     return NULL;
 }
 
-Matrix* matrix_multiply_mt(Matrix* a, Matrix* b, int threads) {
+Matrix* matrix_multiply_cpu_mt(Matrix* a, Matrix* b, int threads) {
 
     if (!a || !b || threads <= 0)
         return NULL;

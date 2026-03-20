@@ -15,6 +15,6 @@ typedef struct {
 void* matrix_worker(void* arg);
 
 // Thread creation
-Matrix* matrix_multiply_mt(Matrix* a, Matrix* b, int threads);
+Matrix* matrix_multiply_cpu_mt(Matrix* a, Matrix* b, int threads);
 
 #endif

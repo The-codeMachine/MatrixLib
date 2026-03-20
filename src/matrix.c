@@ -162,7 +162,7 @@ Matrix* matrix_mulitply(Matrix* a, Matrix* b) {
 
 /*
 Accessing the element m[i][j]:
-    m->data[i * m->cols + j] = 10;
+    m->data[i * m->cols + j]
 */
 
 // debugging functions

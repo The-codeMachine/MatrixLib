@@ -38,7 +38,7 @@ int main() {
 
     fill_random(b);
 
-    Matrix *c = matrix_multiply_mt(a, b, 16);
+    Matrix *c = matrix_multiply_cpu_mt(a, b, 16);
     if (!c)
         return 1;
 
