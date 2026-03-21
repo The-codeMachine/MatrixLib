@@ -25,13 +25,13 @@ int main() {
     // set for random number generator seed
     srand(time(NULL));
 
-    Matrix* a = matrix_create(1000, 1000, 0);
-    Matrix* b = matrix_create(1000, 1000, 0);
+    Matrix* a = matrix_create(10000, 10000, 0);
+    Matrix* b = matrix_create(10000, 10000, 0);
 
     fill_random(a);
     fill_random(b);
 
-    Matrix* c = matrix_create(1000, 1000, 0);
+    Matrix* c = matrix_create(10000, 10000, 0);
 
     matrix_multiply_gpu(a, b, c);
 

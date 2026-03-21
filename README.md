@@ -12,7 +12,7 @@ To install MatrixLib simply use the following command to copy it to your desired
 git clone https://github.com/The-codeMachine/MatrixLib.git
 ```
 
-Currently, to access the matrix operations include "your/folder/dir/src/include/matrix.h", for CPU multithreading include "your/folder/dir/src/include/cpuMultithreading.h"
+Currently, to access the matrix operations include "your/folder/dir/src/include/matrix.h", for multithreading include "your/folder/dir/src/include/multithreading.h"
 
 When GPU multithreading is added a header for that will also need to be include if you want to do GPU multithreading.
 
