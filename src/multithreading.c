@@ -18,7 +18,7 @@ void* matrix_worker(void* arg) {
 
     for (size_t i = data->row_start; i < data->row_end; ++i) {
         for (size_t j = 0; j < b_t->rows; ++j) {
-            double dotProduct = 0.0;
+            float dotProduct = 0.0;
 
             for (size_t k = 0; k < a->cols; ++k) {
                 dotProduct += a->data[i * a->cols + k] * b_t->data[j * b_t->cols + k];
@@ -135,7 +135,7 @@ int matrix_multiply(Matrix* a, Matrix* b, Matrix* c, Backend backend, int thread
         return -1;
 
     if (backend == BACKEND_GPU)
-        return gpu_matrix_multiply(a->data, b->data, c->data, a->rows, a->cols, b->cols);
+        return matrix_multiply_gpu(a, b, c);
 
     return matrix_multiply_cpu_mt(a, b, c, threads);
 }

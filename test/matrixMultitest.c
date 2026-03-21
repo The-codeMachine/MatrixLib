@@ -1,5 +1,6 @@
 #include "../src/include/matrix.h"
 #include "../src/include/multithreading.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -21,19 +22,31 @@ void fill_random(Matrix *a) {
     }
 }
 
-int main() {    
-    // set for random number generator seed
+int main() {
     srand(time(NULL));
 
-    Matrix* a = matrix_create(10000, 10000, 0);
-    Matrix* b = matrix_create(10000, 10000, 0);
+    Matrix* a = matrix_create(3, 5, 0);
+    Matrix* b = matrix_create(5, 3, 0);
+    Matrix* c = matrix_create(3, 3, 0);
 
     fill_random(a);
     fill_random(b);
 
-    Matrix* c = matrix_create(10000, 10000, 0);
+    matrix_print(a);
+    matrix_print(b);
 
+    matrix_multiply(a, b, c, BACKEND_CPU, 4);
+
+    matrix_print(c);
+
+    matrix_free(c);
+    
+    printf("------------------------------------------\n\n");
+    
+    c = matrix_create(3, 3, 0);
     matrix_multiply(a, b, c, BACKEND_GPU, -1);
+
+    matrix_print(c);
 
     matrix_free(a);
     matrix_free(b);

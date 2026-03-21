@@ -15,7 +15,7 @@ void matrix_free(Matrix* matrix) {
 }
 
 // Initializes a matrix with a set number of rows, and columns, each will have a random value 
-Matrix* matrix_create(size_t rows, size_t cols, double initValue) {
+Matrix* matrix_create(size_t rows, size_t cols, float initValue) {
     if (rows == 0 || cols == 0) 
         return NULL;
 
@@ -34,7 +34,7 @@ Matrix* matrix_create(size_t rows, size_t cols, double initValue) {
     matrix->cols = cols;
 
     // allocate memory for the internal array
-    matrix->data = calloc(count, sizeof(double));
+    matrix->data = calloc(count, sizeof(float));
     if (!matrix->data) {
         free(matrix); // no memory leak
         return NULL;
@@ -50,11 +50,11 @@ Matrix* matrix_create(size_t rows, size_t cols, double initValue) {
 
 // ---- Getters / Setters ----
 
-double matrix_get(Matrix* matrix, size_t row, size_t col) {
+float matrix_get(Matrix* matrix, size_t row, size_t col) {
     return matrix->data[row * matrix->cols + col];
 }
 
-void matrix_set(Matrix* matrix, size_t row, size_t col, double value) {
+void matrix_set(Matrix* matrix, size_t row, size_t col, float value) {
     matrix->data[row * matrix->cols + col] = value;
 }
 
@@ -97,7 +97,7 @@ Matrix* matrix_subtract(Matrix* a, Matrix* b) {
 }
 
 // Multiplies a matrix by a scalar
-Matrix* matrix_scalar_multiplication(Matrix* a, double scalar) {
+Matrix* matrix_scalar_multiplication(Matrix* a, float scalar) {
     Matrix* out = matrix_create(a->rows, a->cols, 0);
     if (!out)
         return NULL;

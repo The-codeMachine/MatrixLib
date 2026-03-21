@@ -28,6 +28,9 @@ cl src/matrix.c # necessary
 cl src/multithreading.c # necessary
 cl test/matrixgputest.c # any usage file
 
+# then you must link
+nvcc matrix.obj multithreading.obj gpu_matmul.obj test.obj -o app.exe
+
 app
 ```
 
@@ -38,7 +41,6 @@ to ensure that the nvcc can access the cl.exe.
 
 # TODO
 
-- Migrate all of the doubles into floats
 - Rename the mulithreading file into matrix multiplication
 - Stress test
 - Implement a better matrix by matrix multiplication algorithm

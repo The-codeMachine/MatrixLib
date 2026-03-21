@@ -6,8 +6,8 @@ extern "C" {
     #endif
 
     void gpu_matrix_multiply(
-        const double* A,
-        const double* B, double* C, int A_rows,
+        const float* A,
+        const float* B, float* C, int A_rows,
         int A_cols, int B_cols
     );
 

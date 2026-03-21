@@ -2,12 +2,12 @@
 #include "gpu_matmul.h"
 
 __global__
-void matmul_kernel(double* A, double* B, double* C, int A_rows, int A_cols, int B_cols) {
+void matmul_kernel(float* A, float* B, float* C, int A_rows, int A_cols, int B_cols) {
     int row = blockIdx.y * blockDim.y + threadIdx.y;
     int col = blockIdx.x * blockDim.x + threadIdx.x;
 
     if (row < A_rows && col < B_cols) {
-        double sum = 0.0;
+        float sum = 0.0;
 
         for (int k = 0; k < A_cols; ++k) {
             sum += A[row * A_cols + k] * B[k * B_cols + col];
@@ -18,13 +18,13 @@ void matmul_kernel(double* A, double* B, double* C, int A_rows, int A_cols, int 
 }
 
 extern "C" 
-void gpu_matrix_multiply(const double* A, const double* B, double* C,
+void gpu_matrix_multiply(const float* A, const float* B, float* C,
 int A_rows, int A_cols, int B_cols) {
-    double *d_A, *d_B, *d_C;
+    float *d_A, *d_B, *d_C;
 
-    size_t size_A = A_rows * A_cols * sizeof(double);
-    size_t size_B = A_cols * B_cols * sizeof(double);
-    size_t size_C = A_rows * B_cols * sizeof(double);
+    size_t size_A = A_rows * A_cols * sizeof(float);
+    size_t size_B = A_cols * B_cols * sizeof(float);
+    size_t size_C = A_rows * B_cols * sizeof(float);
 
     cudaMalloc(&d_A, size_A);
     cudaMalloc(&d_B, size_B);
