@@ -126,40 +126,6 @@ Matrix* matrix_transpose(Matrix* original) {
     return out;
 }
 
-// ---- Advance Operations ---- 
-
-// multiplies two matrixes together with O(N^3) time complexity
-Matrix* matrix_mulitply(Matrix* a, Matrix* b) {
-    size_t n = a->cols;
-
-    if (n != b->rows) 
-        return NULL;
-
-    Matrix* c = matrix_create(a->rows, b->cols, 0);
-    if (!c) 
-        return NULL;
-
-    Matrix* b_t = matrix_transpose(b);  // for cache efficiency 
-
-    // O(N^3)
-    for (size_t i = 0; i < a->rows; ++i) {
-        for (size_t j = 0; j < b->cols; ++j) {
-            double dotProduct = 0;
-
-            for (size_t k = 0; k < n; ++k) {
-                dotProduct += (a->data[i * a->cols + k] * b_t->data[j * b_t->cols + k]);
-            }
-
-            c->data[i * c->cols + j] = dotProduct;
-        }
-    }
-
-    matrix_free(b_t);
-
-    return c;
-}  
-
-
 /*
 Accessing the element m[i][j]:
     m->data[i * m->cols + j]

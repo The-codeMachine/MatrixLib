@@ -33,10 +33,6 @@ Matrix* matrix_scalar_multiplication(Matrix* a, double scalar);
 
 Matrix* matrix_transpose(Matrix* original);
 
-// Advance operations
-
-Matrix* matrix_mulitply(Matrix* a, Matrix* b);
-
 // debugging functions
 
 void matrix_print(Matrix* matrix);

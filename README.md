@@ -35,3 +35,10 @@ The above code was taken from the root directory of matrixlib.
 
 To ensure that this will work please make sure you have CUDA's nvcc installed, and that you use x64 Native Tools for 2022 VS Development command prompt, 
 to ensure that the nvcc can access the cl.exe.
+
+# TODO
+
+- Migrate all of the doubles into floats
+- Rename the mulithreading file into matrix multiplication
+- Stress test
+- Implement a better matrix by matrix multiplication algorithm

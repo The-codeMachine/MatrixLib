@@ -1,7 +1,15 @@
 #include "include/multithreading.h"
 #include <stdlib.h>
 
-DWORD WINAPI matrix_worker(LPVOID arg) {
+#if defined(_WIN32) || defined(_WIN64)
+    #define PLATFORM_WINDOWS
+    #include <windows.h>
+#else
+    #define PLATFORM_POSIX
+    #include <pthread.h>
+#endif
+
+void* matrix_worker(void* arg) {
     ThreadData* data = (ThreadData*)arg;
 
     Matrix* a = data->a;
@@ -10,79 +18,124 @@ DWORD WINAPI matrix_worker(LPVOID arg) {
 
     for (size_t i = data->row_start; i < data->row_end; ++i) {
         for (size_t j = 0; j < b_t->rows; ++j) {
-
             double dotProduct = 0.0;
 
             for (size_t k = 0; k < a->cols; ++k) {
-                dotProduct += a->data[i * a->cols + k] *
-                              b_t->data[j * b_t->cols + k];
+                dotProduct += a->data[i * a->cols + k] * b_t->data[j * b_t->cols + k];
             }
 
             c->data[i * c->cols + j] = dotProduct;
         }
     }
 
+    return NULL;
+}
+
+#ifdef PLATFORM_WINDOWS
+
+typedef struct {
+    thread_func func;
+    void* arg;
+} ThreadStart;
+
+DWORD WINAPI thread_adapter(LPVOID arg) {
+    ThreadStart* data = (ThreadStart*)arg;
+    data->func(data->arg);
+    free(data);
+
     return 0;
 }
 
-Matrix* matrix_multiply_cpu_mt(Matrix* a, Matrix* b, int threads) {
+#endif
 
-    if (!a || !b || threads <= 0)
-        return NULL;
+int matrix_multiply_cpu_mt(Matrix* a, Matrix* b, Matrix* c, int threads) {
+
+    if (!a || !b || !c || threads <= 0)
+        return -1;
 
     if (a->cols != b->rows)
-        return NULL;
+        return -1;
 
-    Matrix* c = matrix_create(a->rows, b->cols, 0);
     Matrix* b_t = matrix_transpose(b);
-
-    HANDLE* thread_pool = malloc(sizeof(HANDLE) * threads);
-    ThreadData* thread_data = malloc(sizeof(ThreadData) * threads);
 
     size_t rows_per_thread = a->rows / threads;
 
+#ifdef PLATFORM_WINDOWS
+
+    HANDLE* handles = malloc(sizeof(HANDLE) * threads);
+    ThreadData* data = malloc(sizeof(ThreadData) * threads);
+
     for (int t = 0; t < threads; ++t) {
 
-        thread_data[t].a = a;
-        thread_data[t].b = b_t;
-        thread_data[t].c = c;
+        data[t] = (ThreadData){
+            .a = a,
+            .b = b_t,
+            .c = c,
+            .row_start = t * rows_per_thread,
+            .row_end = (t == threads - 1) ? a->rows : (t + 1) * rows_per_thread
+        };
 
-        thread_data[t].row_start = t * rows_per_thread;
+        ThreadStart* wrapper = malloc(sizeof(ThreadStart));
+        wrapper->func = matrix_worker;
+        wrapper->arg = &data[t];
 
-        thread_data[t].row_end = (t == threads - 1)
-            ? a->rows
-            : (t + 1) * rows_per_thread;
-
-        thread_pool[t] = CreateThread(
-            NULL,
-            0,
-            matrix_worker,
-            &thread_data[t],
-            0,
-            NULL
-        );
+        handles[t] = CreateThread(NULL, 0, thread_adapter, wrapper, 0, NULL);
     }
 
     for (int t = 0; t < threads; ++t) {
-        WaitForSingleObject(thread_pool[t], INFINITE);
-        CloseHandle(thread_pool[t]);
+        WaitForSingleObject(handles[t], INFINITE);
+        CloseHandle(handles[t]);
     }
+
+    free(handles);
+    free(data);
+
+#else // POSIX
+
+    pthread_t* threads_arr = malloc(sizeof(pthread_t) * threads);
+    ThreadData* data = malloc(sizeof(ThreadData) * threads);
+
+    for (int t = 0; t < threads; ++t) {
+
+        data[t] = (ThreadData){
+            .a = a,
+            .b = b_t,
+            .c = c,
+            .row_start = t * rows_per_thread,
+            .row_end = (t == threads - 1) ? a->rows : (t + 1) * rows_per_thread
+        };
+
+        pthread_create(&threads_arr[t], NULL, matrix_worker, &data[t]);
+    }
+
+    for (int t = 0; t < threads; ++t) {
+        pthread_join(threads_arr[t], NULL);
+    }
+
+    free(threads_arr);
+    free(data);
+
+#endif
 
     matrix_free(b_t);
-    free(thread_pool);
-    free(thread_data);
-
-    return c;
+    return 0;
 }
 
-void matrix_multiply_gpu(Matrix* a, Matrix* b, Matrix* c) {
+int matrix_multiply_gpu(Matrix* a, Matrix* b, Matrix* c) {
+    if (!a || !b || !c)
+        return -1;
+
     gpu_matrix_multiply(a->data, b->data, c->data, a->rows, a->cols, b->cols);
+
+    return 0;
 }
 
-void matrix_multiply_mt(Matrix* a, Matrix* b, Matrix* c, Backend backend) {
-    if (backend == BACKEND_GPU) {
-        matrix_multiply_gpu(a, b, c);
-    } else {
-        c = matrix_multiply_cpu_mt(a, b, 4); 
-    }
+int matrix_multiply(Matrix* a, Matrix* b, Matrix* c, Backend backend, int threads) {
+    if (!a || !b || !c)
+        return -1;
+
+    if (backend == BACKEND_GPU)
+        return gpu_matrix_multiply(a->data, b->data, c->data, a->rows, a->cols, b->cols);
+
+    return matrix_multiply_cpu_mt(a, b, c, threads);
 }
