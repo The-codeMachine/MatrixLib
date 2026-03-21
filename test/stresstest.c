@@ -1,5 +1,5 @@
 #include "../src/include/matrix.h"
-#include "../src/include/multithreading.h"
+#include "../src/include/matrixMultiply.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,9 +25,9 @@ void fill_random(Matrix *a) {
 int main() {
     srand(time(NULL));
 
-    Matrix* a = matrix_create(12000, 12000, 0);
-    Matrix* b = matrix_create(12000, 12000, 0);
-    Matrix* c = matrix_create(12000, 12000, 0);
+    Matrix* a = matrix_create(20000, 20000, 0);
+    Matrix* b = matrix_create(20000, 20000, 0);
+    Matrix* c = matrix_create(20000, 20000, 0);
 
     fill_random(a);
     fill_random(b);

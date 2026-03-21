@@ -42,5 +42,4 @@ to ensure that the nvcc can access the cl.exe.
 # TODO
 
 - Rename the mulithreading file into matrix multiplication
-- Stress test
 - Implement a better matrix by matrix multiplication algorithm

@@ -1,4 +1,4 @@
-#include "include/multithreading.h"
+#include "include/matrixMultiply.h"
 #include <stdlib.h>
 
 #if defined(_WIN32) || defined(_WIN64)
