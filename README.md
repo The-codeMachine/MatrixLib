@@ -41,5 +41,6 @@ to ensure that the nvcc can access the cl.exe.
 
 # TODO
 
-- Rename the mulithreading file into matrix multiplication
-- Implement a better matrix by matrix multiplication algorithm
+- Add a binding to other languages (for example GO, or Python)
+- Optimize
+- Add support for other GPUs (not just Nvidia)
