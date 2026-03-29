@@ -1,6 +1,8 @@
 #include "include/matrixMultiply.h"
 #include <stdlib.h>
 
+const size_t BLOCK_SIZE = 32; // block size (maybe 64, idk)
+
 #if defined(_WIN32) || defined(_WIN64)
     #define PLATFORM_WINDOWS
     #include <windows.h>
@@ -16,15 +18,22 @@ void* matrix_worker(void* arg) {
     Matrix* b_t = data->b; // already transposed
     Matrix* c = data->c;
 
-    for (size_t i = data->row_start; i < data->row_end; ++i) {
-        for (size_t j = 0; j < b_t->rows; ++j) {
-            float dotProduct = 0.0;
+    for (size_t ii = 0; ii < a->rows; ii += BLOCK_SIZE) {
+        for (size_t jj = 0; jj < b->cols; jj += BLOCK_SIZE) {
+            for (size_t kk = 0; kk < a->cols; kk += BLOCK_SIZE) {
 
-            for (size_t k = 0; k < a->cols; ++k) {
-                dotProduct += a->data[i * a->cols + k] * b_t->data[j * b_t->cols + k];
+                for (size_t i = ii; i < ii + BLOCK_SIZE && i < a->rows; ++i) {
+                    for (size_t j = jj; j < jj + BLOCK_SIZE && k < b->cols; ++j) {
+                        float sum = c->data[i * c->cols + j];
+
+                        for (size_t k = kk; k < kk + BLOCK_SIZE && k < a->cols; ++k) {
+                            sum += a->data[i * a->cols + k] * b->data[k * b->cols + j];
+                        }
+
+                        c->data[i * c->cols + j] = sum;
+                    }
+                }
             }
-
-            c->data[i * c->cols + j] = dotProduct;
         }
     }
 
