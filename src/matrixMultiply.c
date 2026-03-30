@@ -19,15 +19,15 @@ void* matrix_worker(void* arg) {
     Matrix* c = data->c;
 
     for (size_t ii = 0; ii < a->rows; ii += BLOCK_SIZE) {
-        for (size_t jj = 0; jj < b->cols; jj += BLOCK_SIZE) {
+        for (size_t jj = 0; jj < b_t->cols; jj += BLOCK_SIZE) {
             for (size_t kk = 0; kk < a->cols; kk += BLOCK_SIZE) {
 
                 for (size_t i = ii; i < ii + BLOCK_SIZE && i < a->rows; ++i) {
-                    for (size_t j = jj; j < jj + BLOCK_SIZE && k < b->cols; ++j) {
+                    for (size_t j = jj; j < jj + BLOCK_SIZE && j < b_t->cols; ++j) {
                         float sum = c->data[i * c->cols + j];
 
                         for (size_t k = kk; k < kk + BLOCK_SIZE && k < a->cols; ++k) {
-                            sum += a->data[i * a->cols + k] * b->data[k * b->cols + j];
+                            sum += a->data[i * a->cols + k] * b_t->data[j * b_t->cols + k];
                         }
 
                         c->data[i * c->cols + j] = sum;

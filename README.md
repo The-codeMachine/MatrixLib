@@ -23,7 +23,7 @@ Eventually, there will be a main.h that will include the necessary headers for y
 To compile this project successfully you must compile the CUDA components, and then the C components. To compile successfully enter the following commands:
 
 ```powershell
-nvcc -c src/cude/gpu_matmul.cu -o gpu_matmul.obj # necessary for GPU compilation
+nvcc -c src/cuda/gpu_matmul.cu -o gpu_matmul.obj # necessary for GPU compilation
 cl src/matrix.c # necessary
 cl src/multithreading.c # necessary
 cl test/matrixgputest.c # any usage file
