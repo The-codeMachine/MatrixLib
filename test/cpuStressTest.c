@@ -1,3 +1,4 @@
+
 #include "../src/include/matrix.h"
 #include "../src/include/matrixMultiply.h"
 
@@ -25,16 +26,16 @@ void fill_random(Matrix *a) {
 int main() {
     srand(time(NULL));
     
-    Matrix* a = matrix_create(20000, 20000, 0);
-    Matrix* b = matrix_create(20000, 20000, 0);
-    Matrix* c = matrix_create(20000, 20000, 0);
+    Matrix* a = matrix_create(2000, 2000, 0);
+    Matrix* b = matrix_create(2000, 2000, 0);
+    Matrix* c = matrix_create(2000, 2000, 0);
     
     fill_random(a);
     fill_random(b);
 
     clock_t begin = clock();
     
-    matrix_multiply(a, b, c, BACKEND_GPU, -1);
+    matrix_multiply(a, b, c, BACKEND_CPU, 8);
 
     matrix_free(a);
     matrix_free(b);
