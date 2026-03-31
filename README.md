@@ -18,7 +18,7 @@ When GPU multithreading is added a header for that will also need to be include 
 
 Eventually, there will be a main.h that will include the necessary headers for you, and compile the correct source code. 
 
-# Compilation
+## Compilation without CMake
 
 To compile this project successfully you must compile the CUDA components, and then the C components. To compile successfully enter the following commands:
 
@@ -39,7 +39,29 @@ The above code was taken from the root directory of matrixlib.
 To ensure that this will work please make sure you have CUDA's nvcc installed, and that you use x64 Native Tools for 2022 VS Development command prompt, 
 to ensure that the nvcc can access the cl.exe.
 
-# TODO
+## Compilation with CMake
+
+To compile this project with CMake you must:
+- Make a ```build``` directory
+- Have CMake installed (at least version 3.20)
+
+After you have a build directory, execute the following commands in the root directory
+
+```powershell
+cd build
+cmake ..
+
+cd ..
+
+# only do the above once (to build cache)
+
+cmake --build build # builds the program
+
+./build/debug/test_app # runs the app
+
+```
+
+## TODO
 
 - Add a binding to other languages (for example GO, or Python)
 - Optimize
